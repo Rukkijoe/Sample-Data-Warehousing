@@ -1,1 +1,142 @@
+Create Or Alter Procedure Bronze.Load_Bronze As
+Begin
+	Declare @start_time datetime , @end_time datetime;
+	Begin Try
+		Set @start_time = getdate();
+		Print '=============================';
+		Print ' Loading The Bronze Layer.';
+		Print '=============================';
 
+		Print '=============================';
+		Print ' Loading The CRM Layer ';
+		Print '=============================';
+
+		Print '                              ';
+		Set @start_time = getdate();
+		Print '+++ Truncating Table: Bronze.crm_cust_info';
+
+
+		Truncate Table Bronze.crm_cust_info;
+
+		Print '+++ Inserting Data Into : Bronze.crm_cust_info';
+
+		Print '                              ';
+
+		Bulk Insert Bronze.crm_cust_info
+		from 'C:\Users\USER\Desktop\SQL Mat\sql-data-warehouse-project\datasets\source_crm\cust_info.csv'
+		With (
+				Firstrow = 2,
+				Fieldterminator = ',',
+				Tablock);
+		Set @end_time = getdate();
+
+		print ' +++ Load duration: ' + cast(Datediff(second, @start_time,@end_time)as varchar) + 'Seconds';
+
+		print '                              ';
+		Set @start_time = getdate();
+		Print '+++ Truncating Table: Bronze.crm_prod_info';
+
+		Truncate Table Bronze.crm_prod_info;
+
+		Print '+++ Inserting Data Into : Bronze.crm_prod_info';
+
+		Print '     ';
+		Bulk Insert Bronze.crm_prod_info
+		From 'C:\Users\USER\Desktop\SQL Mat\sql-data-warehouse-project\datasets\source_crm\prd_info.csv'
+		With (		Firstrow = 2,
+					Fieldterminator = ',',
+						Tablock);
+		Set @end_time = getdate();
+		print ' +++ Load duration: ' + cast(Datediff(second, @start_time,@end_time)as varchar) + 'Seconds';
+		Print '                 ';
+		Set @start_time = getdate();
+		Print '+++ Truncating Table: Bronze.crm_sales_details'
+
+		Truncate Table Bronze.crm_sales_details;
+
+		Print '+++ Inserting Data Into : Bronze.crm_sales_details'
+
+		Print '                           ';
+
+		Bulk Insert Bronze.crm_sales_details
+		From 'C:\Users\USER\Desktop\SQL Mat\sql-data-warehouse-project\datasets\source_crm\sales_details.csv'
+		With (		Firstrow = 2,
+					Fieldterminator = ',',
+					Tablock);
+		Set @end_time = getdate();
+		print ' +++ Load duration: ' + cast(Datediff(second, @start_time,@end_time)as varchar) + 'Seconds';
+
+		Print '                                  ';
+
+		Print '=============================';
+		Print 'Loading The ERP Layer ';
+		Print '=============================';
+
+		Print '                              ';
+		Set @start_time = getdate();
+		Print '+++ Truncating Table: Bronze.erp_cust_az12';
+
+		Truncate Table Bronze.erp_cust_az12;
+
+		Print '+++ Inserting Data Into : Bronze.erp_cust_az12';
+		Print '                      ';
+
+		Bulk Insert Bronze.erp_cust_az12
+		From 'C:\Users\USER\Desktop\SQL Mat\sql-data-warehouse-project\datasets\source_erp\cust_az12.csv'
+		With (		Firstrow = 2,
+					Fieldterminator = ',',
+					Tablock);
+		Set @end_time = getdate();
+		print ' +++ Load duration: ' + cast(Datediff(second, @start_time,@end_time)as varchar) + 'Seconds';
+		Print '                         ';
+		Set @start_time = getdate();
+		Print '+++ Truncating Table: Bronze.erp_loc_a101';
+
+		Truncate Table Bronze.erp_loc_a101;
+
+		Print '+++ Inserting Data Into : Bronze.erp_loc_a101';
+
+		Print '                       ';
+
+		Bulk Insert Bronze.erp_loc_a101
+		From 'C:\Users\USER\Desktop\SQL Mat\sql-data-warehouse-project\datasets\source_erp\loc_a101.csv'
+		with (		Firstrow = 2,
+					Fieldterminator = ',',
+					Tablock);
+		Set @end_time = getdate();
+		print ' +++ Load duration: ' + cast(Datediff(second, @start_time,@end_time)as varchar) + 'Seconds';
+		Print '                          ';
+		Set @start_time = getdate();
+		Print '+++ Truncating Table: Bronze.erp_px_cat_g1v2';
+
+		Truncate Table Bronze.erp_px_cat_G1v2;
+
+		Print '+++ Inserting Data Into : Bronze.erp_px_cat_g1v2';
+
+		Print '                           ';
+
+
+		Bulk Insert Bronze.erp_px_cat_g1v2
+		From 'C:\Users\USER\Desktop\SQL Mat\sql-data-warehouse-project\datasets\source_erp\px_cat_g1v2.csv'
+		With (		Firstrow = 2,
+					Fieldterminator = ',',
+					Tablock);
+	Set @end_time = getdate();
+	print ' +++ Load duration: ' + cast(Datediff(second, @start_time,@end_time)as varchar) + 'Seconds';
+	Set @end_time = getdate();
+	Print '========================================';
+	Print ' Loading Bronze Layer Is Completed. ';
+	print ' +++ Load duration: ' + cast(Datediff(second, @start_time,@end_time)as varchar) + 'Seconds';
+	Print '======================================';
+	End Try
+	Begin Catch
+	Print '=====================================================';
+	Print ' Error occurred during loading bronze layer';
+	Print ' Error Message ' + Error_message();
+	Print ' Error Message ' + Cast(error_message() as varchar) ;
+	Print ' Error Message ' + Cast(error_state() as varchar);
+	Print '======================================================'
+	End Catch
+	
+
+End;
