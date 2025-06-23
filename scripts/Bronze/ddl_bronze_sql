@@ -1,1 +1,71 @@
+--- Create Tables for the Bronze Schema 
+-+++++++++++++++++++++++++++++++++++++++
+---1, Create the Customer Info Table
+---+++++++++++++++++++++++++++++++++++++
 
+Create Table Bronze.crm_cust_info
+(		Cst_id Int,
+		Cst_key varchar(50),
+		cst_firtname varchar(50),
+		cst_lastname varchar(50),
+		cst_marital_status varchar(50),
+		cst_gender varchar(50),
+		cst_create_date date	);
+
+---++++++++++++++++++++++++++++++++++++
+
+--- 2,  Create the Product Info Table
+
+---++++++++++++++++++++++++++++++++++++
+
+Create Table Bronze.crm_prod_info
+(		prd_id Int,
+		prd_key Varchar(50),
+		prd_nm Varchar(50),
+		Prd_cost Int,
+		prd_line Varchar(50),
+		prd_start_dt Date,
+		Prd_end_dt date   );
+---++++++++++++++++++++++++++++++++++++
+
+--- 3.  Create the Sales Detail Table
+
+---++++++++++++++++++++++++++++++++++++
+
+Create Table Bronze.crm_Sales_details
+(		sls_ord_num Varchar(50),
+		sls_prd_key Varchar(50),
+		sls_cust_id Int,
+		sls_ord_dt Int,
+		sls_ship_dt Int,
+		sls_due_dt Int,
+		sls_sales Int,
+		sls_quantity Int,
+		sls_price int );
+
+---++++++++++++++++++++++++++++++
+
+--- 4.  Create the customer Info table
+
+---++++++++++++++++++++++++++++++++++++++++
+
+Create Table Bronze.erp_Cust_AZ12
+(		CID Varchar(50),
+		Bdate Date,
+		Gen Varchar(50) );
+
+---+++++++++++++++++++++++++++++++++++++++
+
+--- 5. Create  Location Info table
+
+---+++++++++++++++++++++++++++++++++++++++
+
+Create Table Bronze.erp_Loc_A101
+(		CID Varchar(50),
+		CNTRY Varchar(50));
+
+Create Table Bronze.erp_PX_Cat_G1V2
+(		ID Varchar(50),
+		CAT Varchar(50),
+		SUBCAT Varchar(50),
+		Maintenance Varchar(50) );
