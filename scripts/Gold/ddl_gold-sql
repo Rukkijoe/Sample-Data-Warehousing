@@ -1,0 +1,82 @@
+---===============================================================
+--- Creation of View for the Gold layer ( Customer dimension )
+---===============================================================
+
+If		Object_id('gold.dim_customers', 'V') Is Not Null
+		Drop View gold.dim_customers;
+Go
+Create View gold.dim_customers As
+Select	Row_Number() Over ( Order By cst_id) As Customer_key, --- Create a surrogate key because it is a dimension
+		ci.cst_id As Customer_id,
+		ci.cst_key As Customer_number,
+		ci.cst_firtname As First_name,
+		ci.cst_lastname As  Last_name,
+		la.CNTRY As Country,
+		ci.cst_marital_status As Marital_status,
+		Case When ci.cst_gender <> 'N/A' Then ci.cst_gender --- CRM is the master for gender information
+			Else Coalesce(ca.gen,'N/A')  --- If ca.gen is NULL convert it to N/A
+			End AS Gender,
+		ca.bdate As Birthdate,
+		ci.cst_create_date As Create_date		
+From	Silver.crm_cust_info ci
+		Left Join Silver.erp_Cust_AZ12 As ca 
+On		ci.cst_key = ca.cid
+		Left Join silver.erp_Loc_A101 As la
+On		ci.cst_key = la.CID;
+
+Go
+
+---===============================================================
+--- Creation of View for the Gold layer ( Product dimension )
+---===============================================================
+
+If		Object_id('gold.dim_product', 'V') Is Not Null
+		Drop View gold.dim_product;
+Go
+
+Create View Gold.dim_product As --- Creation of View for the Gold layer ( Customer dimension )
+Select	Row_Number() Over ( Order By pr.prd_start_dt , pr.prd_id) As Product_key, --- Create a surrogate key because it is a dimension
+		pr.prd_id As product_id,
+		pr.prd_key As product_number,
+		pr.prd_nm As product_name,
+		pr.cat_id As category_id,
+		pc.cat As category,
+		pc.subcat As subcategory,
+		pc.maintenance ,
+		pr.prd_line As product_line,
+		pr.prd_cost As cost,
+		pr.prd_start_dt	 As start_date	
+From silver.crm_prod_info As pr
+Left Join silver.erp_PX_Cat_G1V2 As pc
+On pr.cat_id = pc.id
+Where Prd_end_dt is Null; --- Filtering all historical data
+
+Go
+
+---===============================================================
+--- Creation of View for the Gold layer ( Sales fact )
+---===============================================================
+
+If		Object_id('gold.fact_sales', 'V') Is Not Null
+		Drop View gold.fact_sales;
+Go
+
+--- Building FACTS : Use the dimension's surrogate keys instead of IDS to easily connect facts with dimensions
+--- Create the Fact view
+Create View gold.fact_sales As   
+Select sd.Sls_ord_num As Order_number,
+dp.product_key,
+dc.customer_key,
+sd.sls_ord_dt As Order_Date,
+sd.sls_ship_dt As Shipping_date,
+sd.sls_due_dt As Due_date,
+sd.sls_quantity As Quantity,
+sd.sls_price As Unit_price,
+sd.sls_sales As Sales_amount
+From silver.crm_sales_details As sd
+Left Join gold.dim_product As dp
+On sd.sls_prd_key = dp.product_number
+Left Join gold.dim_customers As dc
+On sd.sls_cust_id = dc.customer_id;
+
+Go
