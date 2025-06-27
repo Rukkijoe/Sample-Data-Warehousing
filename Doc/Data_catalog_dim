@@ -1,3 +1,9 @@
-Gold dimension layer.
+Gold layer Catalog.
 
 Gold.dim_customers
+
+
+
+Gold.dim_products
+
+Gold.fact_sales
